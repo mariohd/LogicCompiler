@@ -49,10 +49,7 @@ object parsing {
         token = tokenIterator.next()
 
         if (! expected.contains(token.category)) {
-          throw new UnsupportedOperationException(
-            s"Unexpected Token found at ${token.position} \n" +
-            s"found   : $token \n" +
-            s"expected: ${ token.nextValidTokens().get }")
+          syntaxError(token)
         }
 
         token match {
@@ -67,10 +64,7 @@ object parsing {
       }
 
       if (! finalTokens.contains(token.category) ) {
-        throw new UnsupportedOperationException(
-          s"Unexpected ending Token found at ${token.position} \n" +
-          s"found   : $token \n" +
-          s"expected: ${ token.nextValidTokens().get }")
+        syntaxError(token)
       }
 
       if (parenthesisCount != 0) {
@@ -133,7 +127,7 @@ object parsing {
         case Token(OrOperator, _, _) => orOperator(tokens.tail)
         case Token(ImpliesOperator, _, _) => impliesOperator(tokens.tail)
         case Token(CloseParenthesis, _, _) => closeParenthesis(tokens.tail);
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
@@ -142,7 +136,7 @@ object parsing {
         case Token(Premise, _, _) => premise(tokens.tail)
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
@@ -152,7 +146,7 @@ object parsing {
         case Token(Premise, _, _) => premise(tokens.tail)
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
@@ -161,7 +155,7 @@ object parsing {
         case Token(Premise, _, _) => premise(tokens.tail);
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
@@ -170,7 +164,7 @@ object parsing {
         case Token(Premise, _, _) => premise(tokens.tail);
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
@@ -179,7 +173,7 @@ object parsing {
         case Token(Premise, _, _) => premise(tokens.tail);
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
@@ -191,17 +185,17 @@ object parsing {
         case Token(AndOperator, _, _) => andOperator(tokens.tail)
         case Token(OrOperator, _, _) => orOperator(tokens.tail)
         case Token(ImpliesOperator, _, _) => impliesOperator(tokens.tail)
-        case _ => fail(tokens.head)
+        case _ => syntaxError(tokens.head)
       }
     }
 
-    def fail(token: Token) : Boolean = {
-      throw new UnsupportedOperationException(
-        s"Unexpected Token found at ${token.position} \n" +
-        s"found   : $token \n" +
-        s"expected: ${ token.nextValidTokens().get }")
-    }
-
     init(initialTokens)
+  }
+
+  private  def syntaxError(token: Token): Nothing = {
+    throw new scala.UnsupportedOperationException(
+      s"Unexpected Token found at ${token.position} \n" +
+        s"found   : $token \n" +
+        s"expected: ${token.nextValidTokens().get}")
   }
 }
