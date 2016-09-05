@@ -124,8 +124,8 @@ object parsing {
     walk(false)
   }
 
-  private  def syntaxError(token: Token, s: String): Nothing = {
-    throw new scala.UnsupportedOperationException(
+  private  def syntaxError(token: Token, s: String): Unit = {
+     throw new scala.UnsupportedOperationException(
       s"Unexpected Token found at ${token.position} \n" +
       s"input   : $s \n" +
       s"          ${' '.toString * (token.position - 1)}\u2934\n" +
