@@ -32,7 +32,7 @@ object OtherImplementation {
     loop(s)
   }
 
-  def isValidExpression(initialTokens: List[Token]): Boolean = {
+  def isValidExpression(initialTokens: List[Token], str: String): Boolean = {
     var parenthesisCount = 0
 
     def init(tokens: List[Token]): Boolean = {
@@ -53,7 +53,7 @@ object OtherImplementation {
         case Token(OrOperator, _, _) => orOperator(tokens.tail)
         case Token(ImpliesOperator, _, _) => impliesOperator(tokens.tail)
         case Token(CloseParenthesis, _, _) => closeParenthesis(tokens.tail);
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
@@ -62,7 +62,7 @@ object OtherImplementation {
         case Token(Premise, _, _) => premise(tokens.tail)
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
@@ -72,7 +72,7 @@ object OtherImplementation {
         case Token(Premise, _, _) => premise(tokens.tail)
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
@@ -81,7 +81,7 @@ object OtherImplementation {
         case Token(Premise, _, _) => premise(tokens.tail);
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
@@ -90,7 +90,7 @@ object OtherImplementation {
         case Token(Premise, _, _) => premise(tokens.tail);
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
@@ -99,7 +99,7 @@ object OtherImplementation {
         case Token(Premise, _, _) => premise(tokens.tail);
         case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
         case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
@@ -111,16 +111,18 @@ object OtherImplementation {
         case Token(AndOperator, _, _) => andOperator(tokens.tail)
         case Token(OrOperator, _, _) => orOperator(tokens.tail)
         case Token(ImpliesOperator, _, _) => impliesOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
+        case _ => syntaxError(tokens.head, str)
       }
     }
 
     init(initialTokens)
   }
 
-  private  def syntaxError(token: Token): Nothing = {
+  private  def syntaxError(token: Token, s: String): Nothing = {
     throw new scala.UnsupportedOperationException(
       s"Unexpected Token found at ${token.position} \n" +
+        s"input   : $s \n" +
+        s"          ${' '.toString * (token.position - 1)}\u2934\n" +
         s"found   : $token \n" +
         s"expected: ${token.nextValidTokens.get}")
   }

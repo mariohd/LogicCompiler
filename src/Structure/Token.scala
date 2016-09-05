@@ -11,7 +11,7 @@ case class Token(val t: TokenCategory, val v: String, val p: Int = 0) {
   val position = p
 
   override def toString: String = {
-    s"[category: $category, value: $value]"
+    s"Token[$category, value: $value]"
   }
 
   def nextValidTokens: Option[List[TokenCategory]] = {

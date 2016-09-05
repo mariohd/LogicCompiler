@@ -3,7 +3,6 @@ import Structure.ASTDefinition._
 
 import Structure._
 
-import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -70,8 +69,7 @@ object parsing {
       }
 
       if (parenthesisCount != 0) {
-        println()
-        throw new UnsupportedOperationException(
+        throw new NoSuchElementException(
           s"Missing ${ if (parenthesisCount > 0) CloseParenthesis else OpenParenthesis }.")
       }
 
@@ -84,6 +82,7 @@ object parsing {
   def generateAST(tokens: List[Token]): AST = {
     var token: Token = null
     var ast: AST = null
+    var close = 0
     val tokenIterator = tokens.toSeq.iterator
 
     def walk(c: Boolean): AST = {
@@ -98,15 +97,15 @@ object parsing {
           bTree.addChildRight(walk(true))
         }
         case CloseParenthesis => {
-          null
+          close -= 1
+          ast
         }
         case OpenParenthesis => {
           var loopExpression: AST = null
-
+          close += 1
           def loop(): AST = {
-            val t = walk(c)
-            if (t != null) {
-              loopExpression = t
+            if (close != 0) {
+              loopExpression = walk(c)
               loop()
             } else {
               loopExpression
@@ -128,9 +127,9 @@ object parsing {
   private  def syntaxError(token: Token, s: String): Nothing = {
     throw new scala.UnsupportedOperationException(
       s"Unexpected Token found at ${token.position} \n" +
-        s"expression: $s \n" +
-        s"            ${' '.toString * token.position}^\n" +
-        s"found   : $token \n" +
-        s"expected: ${token.nextValidTokens.get}")
+      s"input   : $s \n" +
+      s"          ${' '.toString * (token.position - 1)}\u2934\n" +
+      s"found   : $token \n" +
+      s"expected: ${token.nextValidTokens.get}")
   }
 }
