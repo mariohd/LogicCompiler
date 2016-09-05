@@ -1,4 +1,6 @@
 import Structure.TokenCategories._
+import Structure.ASTDefinition._
+
 import Structure._
 
 import scala.annotation.tailrec
@@ -36,7 +38,7 @@ object parsing {
     tokens.toList
   }
 
-  def isValidExpression(tokens: List[Token]): Boolean = {
+  def isValidExpression(tokens: List[Token], str: String): Boolean = {
     var expected = List[TokenCategory](NotOperator, Premise, OpenParenthesis)
     val finalTokens = List[TokenCategory](CloseParenthesis, Premise)
 
@@ -49,22 +51,22 @@ object parsing {
         token = tokenIterator.next()
 
         if (! expected.contains(token.category)) {
-          syntaxError(token)
+          syntaxError(token, str)
         }
 
-        token match {
-          case Token(OpenParenthesis, _, _) =>
+        token.category match {
+          case OpenParenthesis =>
             parenthesisCount += 1
-            expected = token.nextValidTokens().get
-          case Token(CloseParenthesis, _, _) =>
+            expected = token.nextValidTokens.get
+          case CloseParenthesis =>
             parenthesisCount -= 1
-            expected = token.nextValidTokens().get
-          case Token(_, _, _) => expected = token.nextValidTokens().get
+            expected = token.nextValidTokens.get
+          case _ => expected = token.nextValidTokens.get
         }
       }
 
       if (! finalTokens.contains(token.category) ) {
-        syntaxError(token)
+        syntaxError(token, str)
       }
 
       if (parenthesisCount != 0) {
@@ -79,123 +81,56 @@ object parsing {
     traverse()
   }
 
-  // OTHER IMPLEMENTATION FOR THE SAME PROBLEM
+  def generateAST(tokens: List[Token]): AST = {
+    var token: Token = null
+    var ast: AST = null
+    val tokenIterator = tokens.toSeq.iterator
 
-  def recursiveTokenizer(s: String): List[Token] = {
+    def walk(c: Boolean): AST = {
+      token = tokenIterator.next()
 
-    @tailrec
-    def loop(str: String, tokens: List[Token] = List()): List[Token] = {
-      if(str.length > 0) {
-        val character = str.head
-        val next = str.substring(1)
-
-        character match {
-          case '(' => loop(next, tokens :+ new Token(OpenParenthesis, "(", s.indexOf(str)))
-          case ')' => loop(next, tokens :+ new Token(CloseParenthesis, ")", s.indexOf(str)))
-          case '^' => loop(next, tokens :+ new Token(AndOperator, "^", s.indexOf(str)))
-          case 'v' => loop(next, tokens :+ new Token(OrOperator, "v", s.indexOf(str)))
-          case '~' => loop(next, tokens :+ new Token(NotOperator, "~", s.indexOf(str)))
-          case '-' if next.head.equals('>') => loop(next.substring(1), tokens :+ new Token(ImpliesOperator, "->", s.indexOf(str)))
-          case ' ' => loop(next, tokens)
-          case _ => loop(next, tokens :+ new Token(Premise, character.toString, s.indexOf(str)))
+      ast = token.category match {
+        case Premise => new NodeProp(token)
+        case NotOperator => new ASTUnary(token).addChild(walk(true))
+        case AndOperator | OrOperator | ImpliesOperator => {
+          val bTree = ASTBinary(token)
+          bTree.addChildLeft(ast)
+          bTree.addChildRight(walk(true))
         }
-      } else {
-        tokens
+        case CloseParenthesis => {
+          null
+        }
+        case OpenParenthesis => {
+          var loopExpression: AST = null
+
+          def loop(): AST = {
+            val t = walk(c)
+            if (t != null) {
+              loopExpression = t
+              loop()
+            } else {
+              loopExpression
+            }
+          }
+
+          loop()
+        }
       }
+
+      if (!c && tokenIterator.hasNext) walk(false)
+
+      ast
     }
-    loop(s)
+
+    walk(false)
   }
 
-  def isValidExpression2(initialTokens: List[Token]): Boolean = {
-    var parenthesisCount = 0
-
-    def init(tokens: List[Token]): Boolean = {
-      if (tokens.isEmpty) return false
-
-      tokens.head match {
-        case Token(Premise, _, _) => premise(tokens.tail)
-        case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
-      }
-    }
-
-    def premise(tokens: List[Token]): Boolean = {
-      if (tokens.isEmpty) if (parenthesisCount == 0) return true else return false
-
-      tokens.head match {
-        case Token(AndOperator, _, _) => andOperator(tokens.tail)
-        case Token(OrOperator, _, _) => orOperator(tokens.tail)
-        case Token(ImpliesOperator, _, _) => impliesOperator(tokens.tail)
-        case Token(CloseParenthesis, _, _) => closeParenthesis(tokens.tail);
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    def notOperator(tokens: List[Token]): Boolean = {
-      tokens.head match {
-        case Token(Premise, _, _) => premise(tokens.tail)
-        case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
-        case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    def openParenthesis(tokens: List[Token]): Boolean = {
-      parenthesisCount += 1
-      tokens.head match {
-        case Token(Premise, _, _) => premise(tokens.tail)
-        case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
-        case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    def andOperator(tokens: List[Token]): Boolean = {
-      tokens.head match {
-        case Token(Premise, _, _) => premise(tokens.tail);
-        case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
-        case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    def orOperator(tokens: List[Token]): Boolean = {
-      tokens.head match {
-        case Token(Premise, _, _) => premise(tokens.tail);
-        case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
-        case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    def impliesOperator(tokens: List[Token]): Boolean = {
-      tokens.head match {
-        case Token(Premise, _, _) => premise(tokens.tail);
-        case Token(OpenParenthesis, _, _) => openParenthesis(tokens.tail)
-        case Token(NotOperator, _, _) => notOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    def closeParenthesis(tokens: List[Token]): Boolean = {
-      parenthesisCount -= 1
-      if (tokens.isEmpty) if (parenthesisCount == 0) return true else return false
-
-      tokens.head match {
-        case Token(AndOperator, _, _) => andOperator(tokens.tail)
-        case Token(OrOperator, _, _) => orOperator(tokens.tail)
-        case Token(ImpliesOperator, _, _) => impliesOperator(tokens.tail)
-        case _ => syntaxError(tokens.head)
-      }
-    }
-
-    init(initialTokens)
-  }
-
-  private  def syntaxError(token: Token): Nothing = {
+  private  def syntaxError(token: Token, s: String): Nothing = {
     throw new scala.UnsupportedOperationException(
       s"Unexpected Token found at ${token.position} \n" +
+        s"expression: $s \n" +
+        s"            ${' '.toString * token.position}^\n" +
         s"found   : $token \n" +
-        s"expected: ${token.nextValidTokens().get}")
+        s"expected: ${token.nextValidTokens.get}")
   }
 }

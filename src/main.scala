@@ -3,9 +3,11 @@
   */
 object main {
   def main(args: Array[String]): Unit = {
-    val expression = "~(PvQ) -> (~P^~Q)" // deMorgan
+    val expression = "~(XvY) -> (~P^~Q)" // deMorgan
+    //val expression = "(Q^P)" // deMorgan
     val tokens = parsing.tokenizer(expression)
-    println(parsing.isValidExpression(tokens))
+    if (parsing.isValidExpression(tokens, expression))
+      println(parsing.generateAST(tokens))
   }
 }
 
