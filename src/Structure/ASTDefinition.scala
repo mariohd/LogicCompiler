@@ -6,7 +6,7 @@ import NodeCategories._
   */
 object ASTDefinition {
 
-  class AST() {}
+  abstract class AST() {}
 
   case class NodeProp(val t: Token) extends AST {
     val category = PropNode
