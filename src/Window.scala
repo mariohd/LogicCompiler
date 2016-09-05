@@ -19,6 +19,8 @@ class Window() extends JFrame("Logic Compiler") {
   private var gComponent: mxGraphComponent = null
   private var expression: String = null
 
+  config
+
   private def generateASTfor(expr: String): Option[AST] = {
     val tokens =  parsing.tokenizer(expr)
     if (parsing.isValidExpression(tokens, expr)) {
@@ -27,8 +29,6 @@ class Window() extends JFrame("Logic Compiler") {
       None
     }
   }
-
-  config
 
   private def setNodes: Unit = {
     graph.getModel.beginUpdate()
@@ -95,6 +95,4 @@ class Window() extends JFrame("Logic Compiler") {
     setLocationRelativeTo(null)
     setVisible(true)
   }
-
-
 }
