@@ -23,4 +23,9 @@ case class Token(val t: TokenCategory, val v: String, val p: Int = 0) {
       case _ => None
     }
   }
+
+  override def equals(o: Any) = o match {
+    case that: Token => (this.category == that.category) && (this.value == that.value)
+    case _ => false
+  }
 }
