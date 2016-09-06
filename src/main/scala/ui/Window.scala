@@ -73,41 +73,34 @@ class Window() extends JFrame("Logic Compiler") {
     }
   }
 
-  private def setNodes: Unit = {
+  private def drawNodes(ast: AST): Unit = {
     graph.getModel.beginUpdate()
 
     def loop(node: AST): AnyRef = {
       node match {
-        case n: NodeProp => graph.insertVertex(graphParent, null, s"${n.token.value}", 0,0, 150, 30)
+        case n: NodeProp => graph.insertVertex(graphParent, null, s"${n.token.value}", 0,0, 150, 30, s"fillColor=${n.nodeColor}")
         case n: ASTBinary => {
-          val p = graph.insertVertex(graphParent, null, s"${n.token.category}(${n.token.value})", 0,0, 150, 30)
+          val p = graph.insertVertex(graphParent, null, s"${n.token.category}(${n.token.value})", 0,0, 150, 30, s"fillColor=${n.nodeColor}")
           graph.insertEdge(graphParent, null, "", p, loop(n.child_left))
           graph.insertEdge(graphParent, null, "", p, loop(n.child_right))
           p
         }
         case n: ASTUnary => {
-          val p = graph.insertVertex(graphParent, null, s"${n.token.category}(${n.token.value})", 0,0, 150, 30)
+          val p = graph.insertVertex(graphParent, null, s"${n.token.category}(${n.token.value})", 0,0, 150, 30, s"fillColor=${n.nodeColor}")
           graph.insertEdge(graphParent, null, "applied on", p, loop(n.child))
           p
         }
       }
     }
 
-    try { loop(generateASTfor(expression).get) } catch {
-      case e: Exception =>
-        val font = new Font( "Monospaced", Font.PLAIN, 12 );
-        UIManager.put("OptionPane.messageFont", font);
-
-        JOptionPane.showMessageDialog(getContentPane, e.getMessage, "Invalid", JOptionPane.WARNING_MESSAGE)
-    }
-
+    loop(ast)
     new  mxHierarchicalLayout(graph).execute(graph.getDefaultParent)
     graph.getModel.endUpdate()
     evaluateButton.setEnabled(true)
   }
 
-  private def drawGraph: Unit = {
-    setNodes
+  private def drawGraph(ast: AST): Unit = {
+    drawNodes(ast)
     gComponent = new mxGraphComponent(graph)
     getContentPane.add(gComponent, BorderLayout.CENTER)
     pack()
@@ -120,6 +113,18 @@ class Window() extends JFrame("Logic Compiler") {
     b.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
         _resetGraph
+        expression = textField.getText
+
+        try {
+          val ast = generateASTfor(expression).get
+          drawGraph(ast)
+        } catch {
+          case e: Exception =>
+            val font = new Font( "Monospaced", Font.PLAIN, 12 );
+            UIManager.put("OptionPane.messageFont", font);
+
+            JOptionPane.showMessageDialog(getContentPane, e.getMessage, "Invalid", JOptionPane.WARNING_MESSAGE)
+        }
       }
     })
     panel.add(b)
@@ -130,11 +135,10 @@ class Window() extends JFrame("Logic Compiler") {
     if (gComponent != null && premisePanel != null) {
       getContentPane.remove(gComponent)
       getContentPane.remove(premisePanel)
-      getContentPane.remove(jLabelPanel)
       graph.removeCells(graph.getChildVertices(graph.getDefaultParent()))
+      if (jLabelPanel != null)
+        getContentPane.remove(jLabelPanel)
     }
-    expression = textField.getText
-    drawGraph
   }
 
   private def config: Unit = {
@@ -150,8 +154,10 @@ class Window() extends JFrame("Logic Compiler") {
           }
         )
         val font = new Font( "Monospaced", Font.BOLD, 30);
-        val result = Solver.solveIt(ast, premisesValues.toMap)
-
+        var (result, coloredAST) = Solver.solveIt(ast, premisesValues.toMap)
+        getContentPane.remove(gComponent)
+        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()))
+        drawGraph(coloredAST)
 
         val jlabel = new JLabel(result.toString.toUpperCase())
         jlabel.setForeground(if (result) new Color(60,179,113) else Color.RED)

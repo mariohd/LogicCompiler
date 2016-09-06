@@ -19,11 +19,11 @@ object Solver {
     println(solveIt(ast, values))
   }
 
-  def solveIt(ast: AST, values: Map[Token, Boolean]): Boolean = {
+  def solveIt(ast: AST, values: Map[Token, Boolean]): (Boolean, AST) = {
 
     def finder(node: AST): Boolean = {
       node match {
-        case n: NodeProp => values.get(n.token).get
+        case n: NodeProp => n.resultValue = Some(values.get(n.token).get); n.resultValue.get
         case n: ASTUnary => unaryOperation(n)
         case n: ASTBinary => binaryOperation(n)
       }
@@ -31,25 +31,27 @@ object Solver {
 
     def unaryOperation(ast: ASTUnary): Boolean = {
       ast.token.category match {
-        case NotOperator => !(finder(ast.child))
+        case NotOperator => ast.resultValue = Some(!(finder(ast.child))); ast.resultValue.get
       }
     }
 
     def binaryOperation(ast: ASTBinary): Boolean = {
       ast.token.category match {
-        case AndOperator => finder(ast.child_left) && finder(ast.child_right)
-        case OrOperator => finder(ast.child_left) || finder(ast.child_right)
+        case AndOperator => ast.resultValue = Some(finder(ast.child_left) && finder(ast.child_right)); ast.resultValue.get
+        case OrOperator => ast.resultValue = Some(finder(ast.child_left) || finder(ast.child_right)); ast.resultValue.get
         case ImpliesOperator => {
           val f = finder(ast.child_left)
           if (f) {
-             f && finder(ast.child_right)
+            ast.resultValue = Some(f && finder(ast.child_right))
+            ast.resultValue.get
           } else {
-            true
+            ast.resultValue = Some(true)
+            ast.resultValue.get
           }
         }
       }
     }
-
-    finder(ast)
+    val result = finder(ast)
+    (result, ast )
   }
 }
