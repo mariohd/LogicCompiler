@@ -1,7 +1,8 @@
-import Structure.TokenCategories._
-import Structure.ASTDefinition._
+package compiler
 
-import Structure._
+import structure.ASTDefinition._
+import structure.TokenCategories._
+import structure._
 
 import scala.collection.mutable.ListBuffer
 
@@ -10,7 +11,7 @@ import scala.collection.mutable.ListBuffer
   */
 
 
-object parsing {
+object Parser {
 
   def tokenizer(s: String): List[Token] = {
     var currentCharPosition = 0

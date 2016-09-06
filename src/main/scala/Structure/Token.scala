@@ -1,9 +1,9 @@
-package Structure
+package structure
 
 /**
   * Created by MarioDiniz on 31/08/16.
   */
-import Structure.TokenCategories._
+import structure.TokenCategories._
 
 case class Token(val t: TokenCategory, val v: String, val p: Int = 0) {
   val category = t

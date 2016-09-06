@@ -1,6 +1,8 @@
-import Structure.ASTDefinition._
-import Structure.TokenCategories._
-import Structure.Token
+package compiler
+
+import structure.ASTDefinition._
+import structure.Token
+import structure.TokenCategories._
 
 /**
   * Created by MarioDiniz on 05/09/16.
@@ -8,12 +10,12 @@ import Structure.Token
 object Solver {
 
   def main(args: Array[String]): Unit = {
-    val tokens =  parsing.tokenizer("~(PvQ) -> (~P^~Q)")
+    val tokens =  Parser.tokenizer("~(PvQ) -> (~P^~Q)")
     val premises = tokens.filter(_.category == Premise)
     val values = premises.map(t =>
       if (t.value == "P") (t, true) else (t, true)
     ).toMap
-    val ast = parsing.generateAST(tokens)
+    val ast = Parser.generateAST(tokens)
     println(solveIt(ast, values))
   }
 

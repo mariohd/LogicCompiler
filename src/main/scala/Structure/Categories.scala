@@ -1,4 +1,4 @@
-package Structure
+package structure
 
 /**
   * Created by MarioDiniz on 31/08/16.

@@ -1,15 +1,17 @@
+package ui
+
 import java.awt.event._
-import java.awt.{Color, BorderLayout, Font, FlowLayout, GridLayout}
-import javax.swing._
+import java.awt.{BorderLayout, Color, FlowLayout, Font, GridLayout}
 import javax.swing.JFrame._
+import javax.swing._
 
-import Structure.ASTDefinition.{ASTUnary, ASTBinary, NodeProp, AST}
-import Structure.TokenCategories._
-import Structure.Token
-
+import compiler.{Solver, Parser}
+import structure.ASTDefinition.{AST, ASTBinary, ASTUnary, NodeProp}
+import structure.Token
+import structure.TokenCategories._
 import com.mxgraph.layout.hierarchical._
 import com.mxgraph.swing.mxGraphComponent
-import com.mxgraph.view.{mxGraph}
+import com.mxgraph.view.mxGraph
 
 import scala.collection.mutable.ListBuffer
 
@@ -61,9 +63,9 @@ class Window() extends JFrame("Logic Compiler") {
   }
 
   private def generateASTfor(expr: String): Option[AST] = {
-    val tokens =  parsing.tokenizer(expr)
-    if (parsing.isValidExpression(tokens, expr)) {
-      ast = parsing.generateAST(tokens)
+    val tokens =  Parser.tokenizer(expr)
+    if (Parser.isValidExpression(tokens, expr)) {
+      ast = Parser.generateAST(tokens)
       identifyPremises(tokens, ast)
       Some(ast)
     } else {
@@ -101,6 +103,7 @@ class Window() extends JFrame("Logic Compiler") {
 
     new  mxHierarchicalLayout(graph).execute(graph.getDefaultParent)
     graph.getModel.endUpdate()
+    evaluateButton.setEnabled(true)
   }
 
   private def drawGraph: Unit = {
@@ -160,6 +163,14 @@ class Window() extends JFrame("Logic Compiler") {
         getContentPane.add(jLabelPanel, BorderLayout.SOUTH)
         pack
       }
+    })
+
+    textField.addKeyListener(new KeyAdapter {
+      override def keyTyped(e: KeyEvent): Unit = {
+        if (evaluateButton.isEnabled)
+          evaluateButton.setEnabled(false)
+      }
+
     })
     setDefaultCloseOperation(EXIT_ON_CLOSE)
     pack()
