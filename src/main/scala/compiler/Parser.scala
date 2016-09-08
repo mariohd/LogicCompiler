@@ -22,11 +22,11 @@ object Parser {
       val character = s.charAt(currentCharPosition)
 
       character match {
-        case '(' => tokens += new Token(OpenParenthesis, "(", currentCharPosition)
-        case ')' => tokens += new Token(CloseParenthesis, ")", currentCharPosition)
-        case '^' => tokens += new Token(AndOperator, "^", currentCharPosition)
-        case 'v' => tokens += new Token(OrOperator, "v", currentCharPosition)
-        case '~' => tokens += new Token(NotOperator, "~", currentCharPosition)
+        case '(' => tokens += new Token(OpenParenthesis, "\u0028", currentCharPosition)
+        case ')' => tokens += new Token(CloseParenthesis, "\u0029", currentCharPosition)
+        case '^' => tokens += new Token(AndOperator, "\u2227", currentCharPosition)
+        case 'v' => tokens += new Token(OrOperator, "\u22C1", currentCharPosition)
+        case '~' => tokens += new Token(NotOperator, "\u223C", currentCharPosition)
         case '-' if s.charAt(currentCharPosition + 1).equals('>') =>
           tokens += new Token(ImpliesOperator, "\u2192", currentCharPosition); currentCharPosition += 1
         case ' ' => ()

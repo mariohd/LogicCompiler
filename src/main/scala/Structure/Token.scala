@@ -7,7 +7,7 @@ import structure.TokenCategories._
 
 case class Token(val t: TokenCategory, val v: String, val p: Int = 0) {
   val category = t
-  val value  = v
+  var value = v
   val position = p
 
   override def toString: String = {
