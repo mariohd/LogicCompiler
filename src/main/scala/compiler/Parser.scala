@@ -83,12 +83,11 @@ object Parser {
   def generateAST(tokens: List[Token]): AST = {
     var token: Token = null
     var ast: AST = null
-    var close = 0
+    var close, open = 0
     val tokenIterator = tokens.toSeq.iterator
 
     def walk(c: Boolean): AST = {
       token = tokenIterator.next()
-
       ast = token.category match {
         case Premise => new NodeProp(token)
         case NotOperator => new ASTUnary(token).addChild(walk(true))
@@ -103,12 +102,14 @@ object Parser {
         }
         case OpenParenthesis => {
           var loopExpression: AST = null
+          open += 1
           close += 1
           def loop(): AST = {
-            if (close != 0) {
+            if (open == close) {
               loopExpression = walk(c)
               loop()
             } else {
+              open -= 1
               loopExpression
             }
           }
@@ -122,7 +123,7 @@ object Parser {
       ast
     }
 
-    walk(false)
+    walk(true)
   }
 
   private  def syntaxError(token: Token, s: String): Unit = {
