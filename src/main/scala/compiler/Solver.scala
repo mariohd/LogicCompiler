@@ -21,6 +21,21 @@ object Solver {
 
   def solveIt(ast: AST, values: Map[Token, Boolean]): (Boolean, AST) = {
 
+    def resetAst(node: AST): Unit = {
+      node match {
+        case n: NodeProp => n.resultValue = None
+        case n: ASTUnary => {
+          n.resultValue = None
+          resetAst(n.child)
+        }
+        case n: ASTBinary => {
+          n.resultValue = None
+          resetAst(n.child_left)
+          resetAst(n.child_right)
+        }
+      }
+    }
+
     def finder(node: AST): Boolean = {
       node match {
         case n: NodeProp => n.resultValue = Some(values.get(n.token).get); n.resultValue.get
@@ -51,6 +66,8 @@ object Solver {
         }
       }
     }
+
+    resetAst(ast)
     val result = finder(ast)
     (result, ast )
   }

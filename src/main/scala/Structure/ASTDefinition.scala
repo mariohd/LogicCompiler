@@ -6,11 +6,11 @@ import NodeCategories._
   */
 object ASTDefinition {
 
-  private val RED = "#fa5658"
-  private val GREEN = "#8BC34A"
+  private val RED = "#fb8e88"
+  private val GREEN = "#b1f99c"
   private val DEFAULT = "#c3d9ff"
 
-  abstract class AST() {}
+  abstract class AST {}
 
   case class NodeProp(val t: Token) extends AST {
     val category = PropNode
@@ -28,7 +28,7 @@ object ASTDefinition {
     }
   }
 
-  case class ASTUnary(val t: Token, c: AST = null ) extends AST {
+  case class ASTUnary(val t: Token) extends AST {
     val category = UnaryNode
     val token = t
     var child: AST = null

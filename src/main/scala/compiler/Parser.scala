@@ -28,7 +28,7 @@ object Parser {
         case 'v' => tokens += new Token(OrOperator, "v", currentCharPosition)
         case '~' => tokens += new Token(NotOperator, "~", currentCharPosition)
         case '-' if s.charAt(currentCharPosition + 1).equals('>') =>
-          tokens += new Token(ImpliesOperator, "->", currentCharPosition); currentCharPosition += 1
+          tokens += new Token(ImpliesOperator, "\u2192", currentCharPosition); currentCharPosition += 1
         case ' ' => ()
         case Pattern(c) => tokens += new Token(Premise, character.toString, currentCharPosition)
       }
