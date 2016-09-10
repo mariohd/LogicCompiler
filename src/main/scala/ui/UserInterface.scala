@@ -2,7 +2,7 @@ package ui
 
 import java.awt.{Dimension, BorderLayout}
 import java.awt.event.{ActionEvent, ActionListener}
-import javax.swing.{JPanel, JButton, JTextField, JFrame}
+import javax.swing._
 
 /**
   * Created by MarioDiniz on 08/09/16.
@@ -25,6 +25,8 @@ class UserInterface extends JFrame {
   private def config = {
     setLayout(new BorderLayout())
     add(inputPanel, BorderLayout.NORTH)
+    setIconImage(new ImageIcon("resources/icon.png").getImage)
+    setTitle("Logic Compiler")
   }
 
   private def configInput = {

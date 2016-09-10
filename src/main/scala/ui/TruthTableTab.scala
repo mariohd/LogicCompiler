@@ -50,7 +50,7 @@ class TruthTableTab(ast: AST, tokens: List[Token]) extends JPanel {
     for (i <- 0 to columnNames.size )
       table.getColumnModel.getColumn(i).setCellRenderer(new ColoredColumnCellRender)
     add(new JScrollPane(table), BorderLayout.CENTER)
-    statusBar.add(new JLabel(s"<html>Expression is: ${expressionIs}</html>"))
+    statusBar.add(new JLabel(s"<html>Expression is a: ${expressionIs}</html>"))
     add(statusBar, BorderLayout.SOUTH)
   }
 
