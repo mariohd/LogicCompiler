@@ -9,16 +9,6 @@ import structure.TokenCategories._
   */
 object Solver {
 
-  def main(args: Array[String]): Unit = {
-    val tokens =  Parser.tokenizer("~(PvQ) -> (~P^~Q)")
-    val premises = tokens.filter(_.category == Premise)
-    val values = premises.map(t =>
-      if (t.value == "P") (t, true) else (t, true)
-    ).toMap
-    val ast = Parser.generateAST(tokens)
-    println(solveIt(ast, values))
-  }
-
   def solveIt(ast: AST, values: Map[Token, Boolean]): (Boolean, AST) = {
 
     def resetAst(node: AST): Unit = {
