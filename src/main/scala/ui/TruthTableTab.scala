@@ -1,6 +1,6 @@
 package ui
 
-import java.awt.{Color, Component, BorderLayout}
+import java.awt.{FlowLayout, Color, Component, BorderLayout}
 import javax.swing._
 import javax.swing.table.{DefaultTableCellRenderer, DefaultTableModel, AbstractTableModel}
 
@@ -19,9 +19,22 @@ class TruthTableTab(ast: AST, tokens: List[Token]) extends JPanel {
   private val resultSet = gen(premises.size)
   private val mappedTokens = resultSet.map(rs => (premises zip rs).toMap)
   private val finalResults = evaluateCombinations.toMap
+  private val expressionIs = expressionCategory
+  private val statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT))
 
   start
   draw
+
+  private def expressionCategory: String = {
+    val value = finalResults.values.toSet
+    if (value.size == 2)
+      "Contingency".toUpperCase()
+    else
+      if (value.head == true)
+      s"<font color='green'>${"Tautology"toUpperCase}</font>"
+    else
+     s"<font color='red'>${"Contradiction"toUpperCase}</font>"
+  }
 
   private def draw = {
 
@@ -36,8 +49,9 @@ class TruthTableTab(ast: AST, tokens: List[Token]) extends JPanel {
     table.setRowSelectionAllowed(false)
     for (i <- 0 to columnNames.size )
       table.getColumnModel.getColumn(i).setCellRenderer(new ColoredColumnCellRender)
-    add(new JScrollPane(table))
-
+    add(new JScrollPane(table), BorderLayout.CENTER)
+    statusBar.add(new JLabel(s"<html>Expression is: ${expressionIs}</html>"))
+    add(statusBar, BorderLayout.SOUTH)
   }
 
   private def evaluateCombinations = {

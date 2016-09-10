@@ -1,7 +1,7 @@
 package ui
 
-import java.awt.BorderLayout
-import javax.swing.{JScrollPane, JTable, JPanel}
+import java.awt.{FlowLayout, BorderLayout}
+import javax.swing.{JLabel, JScrollPane, JTable, JPanel}
 import javax.swing.table.AbstractTableModel
 
 import structure._
@@ -10,6 +10,8 @@ import structure._
   * Created by MarioDiniz on 08/09/16.
   */
 class TokensTab(tokens: List[Token]) extends JPanel {
+  private val statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT))
+
 
   start
   draw
@@ -41,6 +43,8 @@ class TokensTab(tokens: List[Token]) extends JPanel {
     }
 
     val table = new JTable(dataModel)
-    add(new JScrollPane(table))
+    add(new JScrollPane(table), BorderLayout.CENTER)
+    statusBar.add(new JLabel(s"Total: ${tokens.size}"))
+    add(statusBar, BorderLayout.SOUTH)
   }
 }
