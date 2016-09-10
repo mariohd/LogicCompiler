@@ -1,13 +1,13 @@
-package Structure
+package structure
 
 /**
   * Created by MarioDiniz on 31/08/16.
   */
-import Structure.TokenCategories._
+import structure.TokenCategories._
 
 case class Token(val t: TokenCategory, val v: String, val p: Int = 0) {
   val category = t
-  val value  = v
+  var value = v
   val position = p
 
   override def toString: String = {
@@ -22,5 +22,10 @@ case class Token(val t: TokenCategory, val v: String, val p: Int = 0) {
       case OrOperator | AndOperator | ImpliesOperator | NotOperator => Some(List(OpenParenthesis, Premise, NotOperator))
       case _ => None
     }
+  }
+
+  override def equals(o: Any) = o match {
+    case that: Token => (this.category == that.category) && (this.value == that.value)
+    case _ => false
   }
 }

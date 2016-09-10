@@ -1,7 +1,8 @@
-import Structure.TokenCategories._
-import Structure.ASTDefinition._
+package compiler
 
-import Structure._
+import structure.ASTDefinition._
+import structure.TokenCategories._
+import structure._
 
 import scala.collection.mutable.ListBuffer
 
@@ -10,7 +11,7 @@ import scala.collection.mutable.ListBuffer
   */
 
 
-object parsing {
+object Parser {
 
   def tokenizer(s: String): List[Token] = {
     var currentCharPosition = 0
@@ -21,13 +22,13 @@ object parsing {
       val character = s.charAt(currentCharPosition)
 
       character match {
-        case '(' => tokens += new Token(OpenParenthesis, "(", currentCharPosition)
-        case ')' => tokens += new Token(CloseParenthesis, ")", currentCharPosition)
-        case '^' => tokens += new Token(AndOperator, "^", currentCharPosition)
-        case 'v' => tokens += new Token(OrOperator, "v", currentCharPosition)
-        case '~' => tokens += new Token(NotOperator, "~", currentCharPosition)
+        case '(' => tokens += new Token(OpenParenthesis, "\u0028", currentCharPosition)
+        case ')' => tokens += new Token(CloseParenthesis, "\u0029", currentCharPosition)
+        case '^' => tokens += new Token(AndOperator, "\u2227", currentCharPosition)
+        case 'v' => tokens += new Token(OrOperator, "\u22C1", currentCharPosition)
+        case '~' => tokens += new Token(NotOperator, "\u223C", currentCharPosition)
         case '-' if s.charAt(currentCharPosition + 1).equals('>') =>
-          tokens += new Token(ImpliesOperator, "->", currentCharPosition); currentCharPosition += 1
+          tokens += new Token(ImpliesOperator, "\u2192", currentCharPosition); currentCharPosition += 1
         case ' ' => ()
         case Pattern(c) => tokens += new Token(Premise, character.toString, currentCharPosition)
       }
@@ -82,12 +83,11 @@ object parsing {
   def generateAST(tokens: List[Token]): AST = {
     var token: Token = null
     var ast: AST = null
-    var close = 0
+    var close, open = 0
     val tokenIterator = tokens.toSeq.iterator
 
     def walk(c: Boolean): AST = {
       token = tokenIterator.next()
-
       ast = token.category match {
         case Premise => new NodeProp(token)
         case NotOperator => new ASTUnary(token).addChild(walk(true))
@@ -102,12 +102,14 @@ object parsing {
         }
         case OpenParenthesis => {
           var loopExpression: AST = null
+          open += 1
           close += 1
           def loop(): AST = {
-            if (close != 0) {
+            if (open == close) {
               loopExpression = walk(c)
               loop()
             } else {
+              open -= 1
               loopExpression
             }
           }
@@ -121,7 +123,7 @@ object parsing {
       ast
     }
 
-    walk(false)
+    walk(true)
   }
 
   private  def syntaxError(token: Token, s: String): Unit = {

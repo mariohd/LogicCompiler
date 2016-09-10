@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/logicCompiler.iml" filepath="$PROJECT_DIR$/logicCompiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/logiccompiler.iml" filepath="$PROJECT_DIR$/.idea/modules/logiccompiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/logiccompiler-build.iml" filepath="$PROJECT_DIR$/.idea/modules/logiccompiler-build.iml" />
     </modules>
   </component>
 </project>

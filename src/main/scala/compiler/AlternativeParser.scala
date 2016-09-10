@@ -1,12 +1,14 @@
-import Structure.Token
-import Structure.TokenCategories._
+package compiler
+
+import structure.Token
+import structure.TokenCategories._
 
 import scala.annotation.tailrec
 
 /**
   * Created by MarioDiniz on 04/09/16.
   */
-object OtherImplementation {
+object AlternativeParser {
   def recursiveTokenizer(s: String): List[Token] = {
 
     @tailrec
