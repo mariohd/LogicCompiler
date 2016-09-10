@@ -1,8 +1,8 @@
 package ui
 
-import java.awt.BorderLayout
-import javax.swing.{JScrollPane, JTable, JPanel}
-import javax.swing.table.AbstractTableModel
+import java.awt.{Color, Component, BorderLayout}
+import javax.swing._
+import javax.swing.table.{DefaultTableCellRenderer, DefaultTableModel, AbstractTableModel}
 
 import compiler.Solver
 import structure.ASTDefinition.AST
@@ -18,38 +18,24 @@ class TruthTableTab(ast: AST, tokens: List[Token]) extends JPanel {
   private val premises = tokens.filter(_.category == Premise).toSet.toList
   private val resultSet = gen(premises.size)
   private val mappedTokens = resultSet.map(rs => (premises zip rs).toMap)
+  private val finalResults = evaluateCombinations.toMap
 
   start
   draw
 
   private def draw = {
 
-    val dataModel = new AbstractTableModel() {
-      private val finalResults = evaluateCombinations.toMap
-
-      override def getColumnName(i: Int): String = {
-        i match {
-          case x if (premises.size > x) => premises(x).value
-          case _ => "Expression Result"
-        }
-      }
-
-      def getColumnCount: Int = (premises.size + 1)
-
-      def getRowCount: Int = Math.pow(2, premises.size).toInt
-
-      def getValueAt(row: Int, col: Int): Object = {
-        val premisesRow = mappedTokens.toList(row)
-        println(row, col)
-        col match {
-          case x if (premises.size > x) => premisesRow.values.toList(x).toString.toUpperCase.charAt(0).toString
-          case y if (premises.size == y) => finalResults.get(premisesRow).get.toString.toUpperCase
-          case _ => "???"
-        }
-      }
-    }
+    val columnNames = premises.map(_.value.asInstanceOf[Object]).toArray
+    val dataModel = new CustomDataModel(columnNames :+ "Expression Result")
+    finalResults.foreach(r => {
+      val rowValues = r._1.values.foldLeft(Array[Object]())((array, element) => array :+ element.toString.toUpperCase.asInstanceOf[Object]) :+ r._2.toString.toUpperCase.asInstanceOf[Object]
+      dataModel.addRow(rowValues)
+    })
 
     val table = new JTable(dataModel)
+    table.setRowSelectionAllowed(false)
+    for (i <- 0 to columnNames.size )
+      table.getColumnModel.getColumn(i).setCellRenderer(new ColoredColumnCellRender)
     add(new JScrollPane(table))
 
   }
@@ -85,4 +71,30 @@ class TruthTableTab(ast: AST, tokens: List[Token]) extends JPanel {
       values.map(q => q :: acc)
     }
   }
+
+  class ColoredColumnCellRender extends DefaultTableCellRenderer {
+    setHorizontalAlignment(SwingConstants.CENTER)
+
+    override  def getTableCellRendererComponent(table: JTable, value: Object, isSelected: Boolean, hasFocus: Boolean, row: Int, col: Int): Component = {
+      val labelRenderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col).asInstanceOf[JLabel]
+      val tm = table.getModel.asInstanceOf[DefaultTableModel]
+
+      val cellValue = tm.getValueAt(row, col).toString.toBoolean == true
+      if (cellValue){
+        labelRenderer.setBackground(new Color(197, 249, 176))
+      } else {
+        labelRenderer.setBackground(new Color(251, 162, 156))
+      }
+
+      labelRenderer
+    }
+  }
+
+  class CustomDataModel(columnsName: Array[Object]) extends DefaultTableModel(columnsName, 0) {
+
+    override def isCellEditable(row: Int, col: Int): Boolean = {
+      false
+    }
+  }
+
 }
