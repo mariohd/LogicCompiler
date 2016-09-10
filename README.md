@@ -12,10 +12,9 @@ Download the [latest stable realease](https://github.com/mariohd/LogicCompiler/r
 
 Grammar
 =
-    prop    ::= prop_variable | prop_op
-    prop_op ::= (~prop) | (prop ^ prop) | (prop v prop) | (prop -> prop)
-    prop_variable ::= [A-Z]
-
+    proposition ::= premise | (operation)
+    operation   ::= ~ proposition | proposition ^ proposition | proposition v proposition | proposition -> proposition
+    premise     ::= [A-Z]
 
 The project
 =
