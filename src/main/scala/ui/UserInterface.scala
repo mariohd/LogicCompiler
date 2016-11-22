@@ -1,6 +1,6 @@
 package ui
 
-import java.awt.{Dimension, BorderLayout}
+import java.awt.{GridLayout, Dimension, BorderLayout}
 import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing._
 
@@ -32,8 +32,13 @@ class UserInterface extends JFrame {
   private def configInput = {
     val inputField = new JTextField(50)
     val executeButton = new JButton("Execute")
+
+    inputPanel.add(new JLabel("Premiss"))
     inputPanel.add(inputField)
-    inputPanel.add(executeButton)
+
+    val executePanel = new JPanel()
+    executePanel.add(executeButton)
+    inputPanel.add(executePanel)
 
     executeButton.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
