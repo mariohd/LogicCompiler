@@ -1,7 +1,7 @@
-package ui
+package ui.premiseView
 
 import java.awt.BorderLayout
-import javax.swing.{JTabbedPane, JPanel}
+import javax.swing.{JPanel, JTabbedPane}
 
 import compiler.Parser
 
@@ -26,7 +26,6 @@ class ResultPanel(expression: String) extends JPanel {
     tabbedPane.add("Expression Graph", graphPanel)
     tabbedPane.add("Expression Tokens", tokensPanel)
     tabbedPane.add("Truth Table", truthTablePanel)
-    tabbedPane.add("Theorem Proof", theoremProofTablePanel)
     this.add(tabbedPane, BorderLayout.CENTER)
   }
 }

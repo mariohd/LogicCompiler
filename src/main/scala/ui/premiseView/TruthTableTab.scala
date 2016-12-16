@@ -1,8 +1,8 @@
-package ui
+package ui.premiseView
 
-import java.awt.{FlowLayout, Color, Component, BorderLayout}
+import java.awt.{BorderLayout, Color, Component, FlowLayout}
 import javax.swing._
-import javax.swing.table.{DefaultTableCellRenderer, DefaultTableModel, AbstractTableModel}
+import javax.swing.table.{DefaultTableCellRenderer, DefaultTableModel}
 
 import compiler.Solver
 import structure.ASTDefinition.AST

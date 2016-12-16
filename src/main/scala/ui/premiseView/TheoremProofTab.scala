@@ -1,10 +1,9 @@
-package ui
+package ui.premiseView
 
 import java.awt.BorderLayout
 import java.awt.event.{ActionEvent, ActionListener}
-import javax.swing.{JButton, JTextField, JLabel, JPanel}
+import javax.swing._
 
-import compiler.Proof
 import structure.ASTDefinition.AST
 import structure.Token
 
@@ -13,6 +12,7 @@ import structure.Token
   */
 class TheoremProofTab(ast: AST, tokens: List[Token]) extends JPanel {
   private val inputPanel = new JPanel()
+  private val textArea = new JTextArea(5, 20);
 
   config
   draw
@@ -31,7 +31,7 @@ class TheoremProofTab(ast: AST, tokens: List[Token]) extends JPanel {
     evaluateButton.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
 
-        me.add(new GraphTab(Proof.removeImplications(ast, tokens), tokens), BorderLayout.SOUTH);
+
       }
     })
 

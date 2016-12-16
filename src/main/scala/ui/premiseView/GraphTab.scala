@@ -1,16 +1,16 @@
-package ui
+package ui.premiseView
+
+import java.awt.event.{ActionEvent, ActionListener}
+import java.awt.{BorderLayout, FlowLayout, GridLayout}
+import javax.swing._
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout
 import com.mxgraph.swing.mxGraphComponent
 import com.mxgraph.view.mxGraph
 import compiler.Solver
-import structure.ASTDefinition.{ASTUnary, ASTBinary, NodeProp, AST}
+import structure.ASTDefinition.{AST, ASTBinary, ASTUnary, NodeProp}
 import structure.Token
 import structure.TokenCategories._
-
-import java.awt.event.{ActionEvent, ActionListener}
-import java.awt.{FlowLayout, Font, GridLayout, BorderLayout, Color}
-import javax.swing._
 
 
 /**
