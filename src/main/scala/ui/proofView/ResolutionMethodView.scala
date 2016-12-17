@@ -52,9 +52,15 @@ class ResolutionMethodView extends JFrame {
     addPremise.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
         val premise = inputField.getText.toUpperCase.replaceAll("V", "v")
-        dataModel.addPremise(premise)
-        getContentPane.repaint()
-        getContentPane.validate()
+
+        if ("" != premise.trim && premise != null) {
+          dataModel.addPremise(premise)
+          getContentPane.repaint()
+          getContentPane.validate()
+        } else {
+          JOptionPane.showMessageDialog(null, "You need to type something!", "Something wrong", JOptionPane.INFORMATION_MESSAGE)
+        }
+
       }
     })
 

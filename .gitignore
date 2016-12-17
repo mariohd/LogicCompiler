@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/scala,intellij,macos,sublimetext,java
 
+sentences.txt
+sentences_CNF.txt
+
 ### Scala ###
 *.class
 *.log

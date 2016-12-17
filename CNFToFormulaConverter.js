@@ -1,6 +1,10 @@
 function discover(element) {
-    var elementx = eval(element[0]);
-    return loop(elementx)
+    if (element[0].startsWith("[")) {
+        var elementx = eval(element[0]);
+        return loop(elementx)
+    } else {
+        return element[0];
+    }
 }
 
 function loop(e) {
