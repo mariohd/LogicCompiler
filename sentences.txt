@@ -1,2 +1,2 @@
 1
-['implies', 'P', 'Q']
+['implies', ['and', 'P', 'Q'], ['or', 'R', 'B']]

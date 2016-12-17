@@ -1,7 +1,10 @@
 package compiler
 
 import java.io._
+import java.nio.charset.Charset
+import java.nio.file.{Paths, Files}
 import java.util.Scanner
+import javax.script.{Invocable, ScriptEngineManager}
 
 import scala.io.Source
 
@@ -12,11 +15,11 @@ object Converter {
   def toCNF(premise: String) : String = {
     val tokens = Parser.tokenizer(premise)
     val ast = Parser.generateAST(tokens)
-    val CNF = generate(ast.toStr)
-    return CNF
+    val CNF = formulaToCNF(ast.toStr)
+    return CNFtoFormula(CNF)
   }
 
-  private def generate(str: String) : String = {
+  private def formulaToCNF(str: String) : String = {
     val pw = new PrintWriter(new File("sentences.txt" ))
     pw.write("1\n")
     pw.write(str)
@@ -27,5 +30,30 @@ object Converter {
 
     val filename = "sentences_CNF.txt"
     return Source.fromFile(filename).getLines().mkString
+  }
+
+  private def CNFtoFormula(cnf: String): String = {
+
+    val manager = new ScriptEngineManager()
+    val engine = manager.getEngineByName("JavaScript")
+    val jsFile = new File("CNFToFormulaConverter.js")
+
+    def putJsInString(file: File, encoding: Charset): String = {
+      val encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()))
+      return new String(encoded, encoding);
+    }
+
+    def execute(fn: String, parameters: Array[Object]): Object = {
+      val script = putJsInString(jsFile, Charset.defaultCharset())
+      engine.eval(script)
+
+      val inv = engine.asInstanceOf[Invocable]
+
+      return inv.invokeFunction(fn , parameters)
+    }
+
+    var x = execute("discover", Array(cnf))
+
+    return x.toString
   }
 }
