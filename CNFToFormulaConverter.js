@@ -11,7 +11,7 @@ function loop(e) {
     if (e[0] == 'or') {
         var string = [];
 
-        for (i = 1; i < e.length; i++) {
+        for (var i = 1; i < e.length; i++) {
             string.push(loop(e[i]))
         }
 
@@ -20,7 +20,7 @@ function loop(e) {
 
     if (e[0] == 'and') {
         var string = [];
-        for (i = 1; i < e.length; i++) {
+        for (var i = 1; i < e.length; i++) {
             string.push(loop(e[i]))
         }
 
