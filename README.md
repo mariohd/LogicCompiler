@@ -1,10 +1,12 @@
 # Logic Compiler
 
-![alt=Logic Compiler](https://cloud.githubusercontent.com/assets/1095436/18411313/3d19c48a-774b-11e6-9744-b64a471b16d1.png)
+![alt=Logic Compiler](https://cloud.githubusercontent.com/assets/1095436/21286569/805040de-c436-11e6-9d09-5434fcd650e7.png)
+![alt=Logic Compiler](https://cloud.githubusercontent.com/assets/1095436/21286570/846527f2-c436-11e6-8b3f-dadd73995002.png)
 
 Minimum requirements
 =
     - at least JVM 1.8
+    - Python 2
 
 How to use
 =
