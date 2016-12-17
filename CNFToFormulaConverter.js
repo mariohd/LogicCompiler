@@ -1,7 +1,6 @@
 function discover(element) {
     if (element[0].startsWith("[")) {
-        var elementx = eval(element[0]);
-        return loop(elementx)
+        return loop(eval(element[0]))
     } else {
         return element[0];
     }
@@ -9,22 +8,22 @@ function discover(element) {
 
 function loop(e) {
     if (e[0] == 'or') {
-        var string = [];
+        var s = [];
 
         for (var i = 1; i < e.length; i++) {
-            string.push(loop(e[i]))
+            s.push(loop(e[i]))
         }
 
-        return "(" + string.join(" v ") + ")";
+        return "(" + s.join(" v ") + ")";
     }
 
     if (e[0] == 'and') {
-        var string = [];
+        var s = [];
         for (var i = 1; i < e.length; i++) {
-            string.push(loop(e[i]))
+            s.push(loop(e[i]))
         }
 
-        return "(" + string.join(" ^ ") + ")";
+        return "(" + s.join(" ^ ") + ")";
     }
 
     if (e[0] == 'not') {
