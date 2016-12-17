@@ -13,6 +13,7 @@ import ui.premiseView.{PremiseView, ResultPanel}
   */
 class ResolutionMethodView extends JFrame {
   private val inputPanel = new JPanel
+  private val theoremPanel = new JPanel
   private val premiseTablePanel = new JPanel(new BorderLayout)
   private val dataModel = new PremiseDataModel
 
@@ -29,7 +30,10 @@ class ResolutionMethodView extends JFrame {
 
   private def config = {
     setLayout(new BorderLayout())
-    add(inputPanel, BorderLayout.NORTH)
+    val topPanel = new JPanel(new BorderLayout)
+    topPanel.add(inputPanel, BorderLayout.NORTH)
+    topPanel.add(theoremPanel, BorderLayout.SOUTH)
+    add(topPanel, BorderLayout.NORTH)
     add(premiseTablePanel, BorderLayout.CENTER)
     setIconImage(new ImageIcon("resources/icon.png").getImage)
     setTitle(s"Resolution Method proof")
@@ -37,8 +41,11 @@ class ResolutionMethodView extends JFrame {
 
   private def configInput = {
     val inputField = new JTextField(50)
+    val premiseLabel = new JLabel("Premises")
     val addPremise = new JButton("Add")
+    addPremise.setPreferredSize(new Dimension(80, 35))
 
+    inputPanel.add(premiseLabel)
     inputPanel.add(inputField)
     inputPanel.add(addPremise)
 
@@ -50,6 +57,18 @@ class ResolutionMethodView extends JFrame {
         getContentPane.validate()
       }
     })
+
+    val theoremField = new JTextField(50)
+    val theoremLabel = new JLabel("Theorem")
+    val verifyTheorem = new JButton("Verify")
+    verifyTheorem.setPreferredSize(new Dimension(80, 35))
+    theoremLabel.setPreferredSize(premiseLabel.getPreferredSize)
+
+    verifyTheorem.setEnabled(false)
+
+    theoremPanel.add(theoremLabel)
+    theoremPanel.add(theoremField)
+    theoremPanel.add(verifyTheorem)
 
     val table = new JTable(dataModel)
     premiseTablePanel.add(new JScrollPane(table), BorderLayout.CENTER)
