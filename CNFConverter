@@ -29,7 +29,7 @@ def reduceOperators(formula) :
 # Example : ["and", "A", "A"] should be "A"
 def removeDuplicates(formula) :
     if (isinstance(formula, str) or (isinstance(formula, list) and formula[0] == "not" and isinstance(formula[1], str))) :
-        return formula    
+        return formula
     for i, checkItem in enumerate(formula) :
         if (i > 0) :
             for j, item in reversed(list(enumerate(formula))) :
@@ -134,12 +134,12 @@ def convert(formula) :
                     formula.remove(formula[-1])
                 formula.append(conjuncts)
                 return convert(formula)
-            # Case A OR B, 
+            # Case A OR B,
             elif ((isinstance(formula[1], str) and isinstance(formula[2], str)) or (isinstance(formula[1], str) and isinstance(formula[2], list) and (formula[2])[0] == "not" and isinstance((formula[2])[1], str)) or (isinstance(formula[2], str) and isinstance(formula[1], list) and (formula[1])[0] == "not" and isinstance((formula[1])[1], str))) :
                 formula.append(["or", formula[1], formula[2]])
                 formula.remove(formula[1])
                 formula.remove(formula[1])
-                
+
                 formula = reduceOperators(formula)
                 formula = sort(formula)
                 return formula
@@ -154,7 +154,7 @@ def convert(formula) :
                         disjuncts.append(convert(item))
                 disjuncts.insert(0, "or")
                 return convert(disjuncts)
-            
+
         elif (formula[0] == "and") :
             # Handling the case ["and", "A", ["or", "C", "D"], ["or", "D", "C"]]
             formula = sort(formula)
@@ -170,10 +170,12 @@ def convert(formula) :
                 if (i > 0) :
                     disjuncts.append(convert(item))
             disjuncts.insert(0, "and")
-            
+
             disjuncts = reduceOperators(disjuncts)
             return disjuncts
-            
+
+
+
 # Read the input file
 inputFile = open(sys.argv[2])
 numSentences = -1
@@ -188,11 +190,12 @@ outputFile = open('sentences_CNF.txt', 'w+')
 # For each sentence convert it to CNF
 for sentence in sentences:
     formula = convert(sentence)
-    
+
     formula = sort(formula)
     formula = removeDuplicates(formula)
     formula = reduceOperators(formula)
     formula = sort(formula)
-    
+
     outputFile.write (str(formula) + '\n')
 inputFile.close()
+outputFile.close()

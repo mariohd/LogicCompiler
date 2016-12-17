@@ -10,7 +10,9 @@ object ASTDefinition {
   private val GREEN = "#b1f99c"
   private val DEFAULT = "#c3d9ff"
 
-  abstract class AST {}
+  abstract class AST {
+    def toStr: String
+  }
 
   case class NodeProp(val t: Token) extends AST {
     val category = PropNode
@@ -26,6 +28,8 @@ object ASTDefinition {
         case _ => DEFAULT
       }
     }
+
+    override def toStr: String = s"'${t.value}'"
   }
 
   case class ASTUnary(val t: Token) extends AST {
@@ -33,6 +37,10 @@ object ASTDefinition {
     val token = t
     var child: AST = null
     var resultValue: Option[Boolean] = None
+
+    override def toStr: String = {
+      return s"['${token.category.toString.toLowerCase.replace("operator", "") }', ${this.child.toStr}]"
+    }
 
     def addChild(c: AST): AST = {
       this.child = c
@@ -72,6 +80,10 @@ object ASTDefinition {
         case Some(false) => RED
         case _ => DEFAULT
       }
+    }
+
+    def toStr: String = {
+      return s"['${token.category.toString.toLowerCase.replace("operator", "") }', ${this.child_left.toStr}, ${this.child_right.toStr}]"
     }
 
     override def toString: String = s"[token: $token, category: $category, child-left: $child_left, child-right: $child_right]"

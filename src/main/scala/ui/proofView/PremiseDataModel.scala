@@ -38,11 +38,13 @@ class PremiseDataModel extends AbstractTableModel {
 
   override def getValueAt(row: Int, col: Int): Object = {
     col match {
-      case 0 => premises.lift(row).get.premise
-      case 1 => premises.lift(row).get.cnfForm
+      case 0 => sanitize(premises.lift(row).get.premise)
+      case 1 => sanitize(premises.lift(row).get.cnfForm)
       case 2 => "View"
       case 3 => "Delete"
     }
   }
 
+  private def sanitize(s: String): String =
+    s.replaceAll("->", "\u2192").replaceAll(" ^", " \u2227").replaceAll("v", "\u22C1")
 }

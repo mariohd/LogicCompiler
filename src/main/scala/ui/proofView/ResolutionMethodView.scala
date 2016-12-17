@@ -3,6 +3,8 @@ package ui.proofView
 import java.awt.event._
 import java.awt._
 import javax.swing._
+import javax.swing.text.DocumentFilter.FilterBypass
+import javax.swing.text.{DocumentFilter, AttributeSet, AbstractDocument}
 
 import ui.premiseView.{PremiseView, ResultPanel}
 
@@ -36,12 +38,13 @@ class ResolutionMethodView extends JFrame {
   private def configInput = {
     val inputField = new JTextField(50)
     val addPremise = new JButton("Add")
+
     inputPanel.add(inputField)
     inputPanel.add(addPremise)
 
     addPremise.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
-        val premise = inputField.getText;
+        val premise = inputField.getText.toUpperCase.replaceAll("V", "v")
         dataModel.addPremise(premise)
         getContentPane.repaint()
         getContentPane.validate()
