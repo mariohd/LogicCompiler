@@ -1,8 +1,8 @@
-package ui
+package ui.premiseView
 
-import java.awt.{FlowLayout, BorderLayout}
-import javax.swing.{JLabel, JScrollPane, JTable, JPanel}
+import java.awt.{BorderLayout, FlowLayout}
 import javax.swing.table.AbstractTableModel
+import javax.swing.{JLabel, JPanel, JScrollPane, JTable}
 
 import structure._
 
@@ -11,7 +11,6 @@ import structure._
   */
 class TokensTab(tokens: List[Token]) extends JPanel {
   private val statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT))
-
 
   start
   draw

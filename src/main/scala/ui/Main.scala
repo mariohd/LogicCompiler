@@ -1,10 +1,13 @@
-package ui
+package ui.premiseView
+
+import ui.proofView.ResolutionMethodView
 
 /**
   * Created by MarioDiniz on 31/08/16.
   */
 object Main extends App {
-  new UserInterface()
+  //new PremiseView("(P -> Q)")
+  new ResolutionMethodView
 }
 
 
