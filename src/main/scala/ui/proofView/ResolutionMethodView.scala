@@ -79,8 +79,12 @@ class ResolutionMethodView extends JFrame {
     val table = new JTable(dataModel)
     premiseTablePanel.add(new JScrollPane(table), BorderLayout.CENTER)
 
-    table.getColumn("Viewer").setCellRenderer(new ButtonRenderer)
-    table.getColumn("Remove").setCellRenderer(new ButtonRenderer)
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN)
+    table.getColumnModel.getColumn(0).setPreferredWidth(350)
+    table.getColumnModel.getColumn(1).setPreferredWidth(350)
+
+    table.getColumnModel.getColumn(2).setCellRenderer(new ButtonRenderer)
+    table.getColumnModel.getColumn(3).setCellRenderer(new ButtonRenderer)
 
     table.addMouseListener(new MouseAdapter {
       override def mouseClicked(evt: MouseEvent) {
