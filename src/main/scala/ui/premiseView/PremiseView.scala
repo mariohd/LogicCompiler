@@ -1,6 +1,6 @@
 package ui.premiseView
 
-import java.awt.{BorderLayout, Dimension, Font}
+import java.awt.{Toolkit, BorderLayout, Dimension, Font}
 import javax.swing._
 
 /**
@@ -15,7 +15,10 @@ class PremiseView(premise: String = "") extends JFrame {
   start
 
   private def start = {
-    setSize(new Dimension(640, 480))
+    val screenSize = Toolkit.getDefaultToolkit.getScreenSize
+    setSize(new Dimension(
+      (screenSize.getWidth * .60).toInt,
+      (screenSize.getHeight * .60).toInt))
     setLocationRelativeTo(null)
     setVisible(true)
   }

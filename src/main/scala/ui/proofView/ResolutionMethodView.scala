@@ -22,7 +22,10 @@ class ResolutionMethodView extends JFrame {
   start
 
   private def start = {
-    setSize(new Dimension(800, 600))
+    val screenSize = Toolkit.getDefaultToolkit.getScreenSize
+    setSize(new Dimension(
+      (screenSize.getWidth * .75).toInt,
+      (screenSize.getHeight * .75).toInt))
     setLocationRelativeTo(null)
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     setVisible(true)
