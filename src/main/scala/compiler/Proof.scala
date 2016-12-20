@@ -7,9 +7,9 @@ import scala.collection.mutable.ListBuffer
   */
 object Proof {
   def isTheorem(premises: List[String], theorem: String): Boolean = {
-    var clauses = premises.map(identifyClauses).flatten
-    clauses = clauses ++ identifyClauses(Converter.toCNF(s"~(${theorem})"))
-    return proof(clauses.sorted)
+    var clauses = premises.flatMap(identifyClauses)
+    clauses = clauses ++ identifyClauses(Converter.toCNF(s"~($theorem)"))
+    proof(clauses.sorted)
   }
 
   private def identifyClauses(premise: String): ListBuffer[String] = {
@@ -28,25 +28,25 @@ object Proof {
 
     while (foundSolution == 0) {
       var resolventClauses = ListBuffer[String]()
-      var descendingIterator = listOfClauses.iterator.toList.reverse.iterator
+      val descendingIterator = listOfClauses.iterator.toList.reverseIterator
       var counterDescending = listOfClauses.size
       while (descendingIterator.hasNext && foundSolution == 0) {
         counterDescending -= 1
-        var descendingClause = descendingIterator.next
-        var descendingLiteralsList = descendingClause.split("v").map((s) => s.trim).toList
-        var ascendingInterator = listOfClauses.iterator
+        val descendingClause = descendingIterator.next
+        val descendingLiteralsList = descendingClause.split("v").map((s) => s.trim).toList
+        val ascendingIterator = listOfClauses.iterator
         var counterAscending = -1
-        while (ascendingInterator.hasNext && foundSolution == 0) {
+        while (ascendingIterator.hasNext && foundSolution == 0) {
           counterAscending += 1
-          var ascendingClause = ascendingInterator.next
+          val ascendingClause = ascendingIterator.next
           if (counterDescending > counterAscending) {
             if (!descendingClause.equals(ascendingClause)) {
-              var ascendingLiteralsList = ascendingClause.split("v").map((s) => s.trim).toList
+              val ascendingLiteralsList = ascendingClause.split("v").map((s) => s.trim).toList
               for (descendingLiteral <- descendingLiteralsList) {
                 if (descendingLiteral.startsWith("~")) {
                   negatedDescendingLiteral = descendingLiteral.substring(1)
                 } else {
-                  negatedDescendingLiteral = s"~${descendingLiteral}"
+                  negatedDescendingLiteral = s"~$descendingLiteral"
                 }
                 if (ascendingLiteralsList.contains(negatedDescendingLiteral)) {
                   var setResolventLiterals = Set[String]()
@@ -90,7 +90,7 @@ object Proof {
       }
     }
 
-    return foundSolution match {
+    foundSolution match {
       case 1 => true
       case _ => false
     }
