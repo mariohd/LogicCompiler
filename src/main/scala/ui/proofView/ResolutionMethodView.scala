@@ -3,10 +3,9 @@ package ui.proofView
 import java.awt.event._
 import java.awt._
 import javax.swing._
-import javax.swing.text.DocumentFilter.FilterBypass
-import javax.swing.text.{DocumentFilter, AttributeSet, AbstractDocument}
 
-import ui.premiseView.{PremiseView, ResultPanel}
+import compiler.Proof
+import ui.premiseView.{PremiseView}
 
 /**
   * Created by MarioDiniz on 16/12/16.
@@ -73,7 +72,15 @@ class ResolutionMethodView extends JFrame {
     verifyTheorem.setPreferredSize(new Dimension(80, 35))
     theoremLabel.setPreferredSize(premiseLabel.getPreferredSize)
 
-    verifyTheorem.setEnabled(false)
+    verifyTheorem.addActionListener(new ActionListener {
+      override def actionPerformed(e: ActionEvent): Unit = {
+        if (Proof.isTheorem(dataModel.premises.map((s) => s.cnfForm).toList, theoremField.getText.toUpperCase.replace("V", "v"))) {
+          JOptionPane.showMessageDialog(null, s"${theoremField.getText} is a theorem.", "Proved", JOptionPane.PLAIN_MESSAGE)
+        } else {
+          JOptionPane.showMessageDialog(null, s"${theoremField.getText} is not a theorem.", "Not a theorem", JOptionPane.ERROR_MESSAGE)
+        }
+      }
+    })
 
     theoremPanel.add(theoremLabel)
     theoremPanel.add(theoremField)
