@@ -25,6 +25,7 @@ class ResolutionMethodView extends JFrame {
     setSize(new Dimension(
       (screenSize.getWidth * .75).toInt,
       (screenSize.getHeight * .75).toInt))
+    setMinimumSize(new Dimension(800, 400))
     setLocationRelativeTo(null)
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     setVisible(true)
@@ -60,7 +61,9 @@ class ResolutionMethodView extends JFrame {
           getContentPane.repaint()
           getContentPane.validate()
         } else {
-          JOptionPane.showMessageDialog(null, "You need to type something!", "Something wrong", JOptionPane.INFORMATION_MESSAGE)
+          JOptionPane.showMessageDialog(null,
+            "You need to type something!",
+            "Something wrong", JOptionPane.INFORMATION_MESSAGE)
         }
 
       }
@@ -75,9 +78,9 @@ class ResolutionMethodView extends JFrame {
     verifyTheorem.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
         if (Proof.isTheorem(dataModel.premises.map((s) => s.cnfForm).toList, theoremField.getText.toUpperCase.replace("V", "v"))) {
-          JOptionPane.showMessageDialog(null, s"${theoremField.getText} is a theorem.", "Proved", JOptionPane.PLAIN_MESSAGE)
+          JOptionPane.showMessageDialog(null, s"${sanitize(theoremField.getText)} is a theorem.", "Proved", JOptionPane.PLAIN_MESSAGE)
         } else {
-          JOptionPane.showMessageDialog(null, s"${theoremField.getText} is not a theorem.", "Not a theorem", JOptionPane.ERROR_MESSAGE)
+          JOptionPane.showMessageDialog(null, s"${sanitize(theoremField.getText)} is not a theorem.", "Not a theorem", JOptionPane.ERROR_MESSAGE)
         }
       }
     })
@@ -119,4 +122,7 @@ class ResolutionMethodView extends JFrame {
       }
     })
   }
+
+  def sanitize(s: String): String =
+    s.replaceAll("->", "\u2192").replaceAll(" ^", " \u2227").replaceAll("v", "\u22C1")
 }
