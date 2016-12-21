@@ -1,6 +1,6 @@
 package ui.proofView
 
-import java.awt.{Font, BorderLayout, Toolkit, Dimension}
+import java.awt._
 import javax.swing._
 import javax.swing.border.EmptyBorder
 import javax.swing.table.{TableColumn, DefaultTableCellRenderer, AbstractTableModel}
@@ -12,10 +12,13 @@ import scala.collection.mutable.ListBuffer
   */
 class ResolutionSteps(premises: String, theorem: String) extends JFrame {
 
-  val dataModel = new ResolutionDataModel
-  val table = new JTable(dataModel)
-  val label = new JLabel(s"$premises \u22AC $theorem", SwingConstants.CENTER)
-
+  private val dataModel = new ResolutionDataModel
+  private val table = new JTable(dataModel)
+  private val label = new JLabel(s"$premises \u22AC $theorem", SwingConstants.CENTER)
+  private val statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT))
+  private val resultLabel = new JLabel(s"<html>Theorem " +
+                                        s"<font color='red''>NOT PROVED</font>" +
+                                       s"</html>")
   config
   start
 
@@ -43,12 +46,18 @@ class ResolutionSteps(premises: String, theorem: String) extends JFrame {
     label.setFont(new Font("Serif", Font.PLAIN, 20))
     label.setBorder(new EmptyBorder(15, 15, 15, 15))
     add(label, BorderLayout.NORTH)
+
+    add(statusBar, BorderLayout.SOUTH)
+    statusBar.add(resultLabel)
   }
 
   def isProved = {
-      label.setText(s"$premises \u22A2 $theorem")
-      repaint()
-      validate()
+    label.setText(s"$premises \u22A2 $theorem")
+    resultLabel.setText(s"<html>Theorem " +
+      s"<font color='green''>PROVED</font>" +
+      s"</html>")
+    repaint()
+    validate()
   }
 
   def receiveStep(elements: (String, String, String)): Unit = {
