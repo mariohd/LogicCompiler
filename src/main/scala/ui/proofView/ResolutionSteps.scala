@@ -3,7 +3,7 @@ package ui.proofView
 import java.awt.{Font, BorderLayout, Toolkit, Dimension}
 import javax.swing._
 import javax.swing.border.EmptyBorder
-import javax.swing.table.AbstractTableModel
+import javax.swing.table.{TableColumn, DefaultTableCellRenderer, AbstractTableModel}
 
 import scala.collection.mutable.ListBuffer
 
@@ -31,6 +31,15 @@ class ResolutionSteps(premises: String, theorem: String) extends JFrame {
     setLayout(new BorderLayout())
     setTitle(s"Resolution View")
     add(new JScrollPane(table), BorderLayout.CENTER)
+
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN)
+    val indexColumn = table.getColumnModel.getColumn(0)
+    indexColumn.setMaxWidth(50)
+
+    val centerRenderer = new DefaultTableCellRenderer
+    centerRenderer.setHorizontalAlignment( SwingConstants.CENTER )
+    indexColumn.setCellRenderer(centerRenderer)
+
     label.setFont(new Font("Serif", Font.PLAIN, 20))
     label.setBorder(new EmptyBorder(15, 15, 15, 15))
     add(label, BorderLayout.NORTH)

@@ -61,11 +61,8 @@ class ResolutionMethodView extends JFrame {
           getContentPane.repaint()
           getContentPane.validate()
         } else {
-          JOptionPane.showMessageDialog(null,
-            "You need to type something!",
-            "Something wrong", JOptionPane.INFORMATION_MESSAGE)
+          somethingWrongWithInput
         }
-
       }
     })
 
@@ -78,10 +75,16 @@ class ResolutionMethodView extends JFrame {
     verifyTheorem.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
         val theorem = (theoremField.getText.toUpperCase.replace("V", "v"))
-        val premises = dataModel.premises.map((s) => s.premise).mkString(", ")
-        val resolutionStepsView = new ResolutionSteps(sanitize(premises), sanitize(theorem))
-        if (Proof.isTheorem(dataModel.premises.map((s) => s.cnfForm).toList, theorem, resolutionStepsView.receiveStep))
-          resolutionStepsView.isProved
+
+        if ("" != theorem.trim && theorem != null) {
+          val premises = dataModel.premises.map((s) => s.premise).mkString(", ")
+          val resolutionStepsView = new ResolutionSteps(sanitize(premises), sanitize(theorem))
+          if (Proof.isTheorem(dataModel.premises.map((s) => s.cnfForm).toList, theorem, resolutionStepsView.receiveStep))
+            resolutionStepsView.isProved
+        } else {
+          somethingWrongWithInput
+        }
+
       }
     })
 
@@ -123,6 +126,11 @@ class ResolutionMethodView extends JFrame {
     })
   }
 
-  def sanitize(s: String): String =
+  private def somethingWrongWithInput = {
+    JOptionPane.showMessageDialog(null,
+      "You need to type something!",
+      "Something wrong", JOptionPane.INFORMATION_MESSAGE)
+  }
+  private def sanitize(s: String): String =
     s.replaceAll("->", "\u2192").replaceAll(" ^", " \u2227").replaceAll("v", "\u22C1")
 }
