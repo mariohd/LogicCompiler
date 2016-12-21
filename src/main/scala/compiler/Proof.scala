@@ -6,10 +6,10 @@ import scala.collection.mutable.ListBuffer
   * Created by MarioDiniz on 10/11/16.
   */
 object Proof {
-  def isTheorem(premises: List[String], theorem: String): Boolean = {
+  def isTheorem(premises: List[String], theorem: String, callback: ((String, String, String)) => Unit): Boolean = {
     var clauses = premises.flatMap(identifyClauses)
     clauses = clauses ++ identifyClauses(Converter.toCNF(s"~($theorem)"))
-    proof(clauses.sorted)
+    proof(clauses.sorted, callback)
   }
 
   private def identifyClauses(premise: String): ListBuffer[String] = {
@@ -21,7 +21,7 @@ object Proof {
     clauses
   }
 
-  private def proof(clauses: List[String]): Boolean = {
+  private def proof(clauses: List[String], callback: ((String, String, String)) => Unit): Boolean = {
     var foundSolution = 0
     var negatedDescendingLiteral: String = null
     var listOfClauses = clauses.toSet
@@ -76,7 +76,16 @@ object Proof {
 
                   if (resolvent.length == 0) {
                     foundSolution = 1
+
                   }
+                  callback((getExpression(ascendingLiteralsList),
+                    getExpression(descendingLiteralsList),
+                    s"${
+                      resolvent match {
+                        case "" => "NULL CLAUSE"
+                        case _ => s"(${resolvent.replaceAll("v", ", ")})"
+                      }
+                    }"))
                 }
               }
             }
@@ -98,5 +107,20 @@ object Proof {
 
   private def contains(a: Set[String], b: Set[String]) : Boolean = {
     a.map((x) => b.contains(x)).fold(true)({(x, y) => x && y })
+  }
+
+  private def getExpression(list: List[String]): String = {
+    var aux = "("
+    var first = true
+    for (literal <- list) {
+      if (!first) {
+        aux += ", "
+      } else {
+        first = false
+      }
+      aux += literal
+    }
+    aux += ")"
+    aux
   }
 }

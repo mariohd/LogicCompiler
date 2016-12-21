@@ -17,7 +17,6 @@ class ResultPanel(expression: String) extends JPanel {
   private val graphPanel = new GraphTab(ast, tokens)
   private val tokensPanel = new TokensTab(tokens)
   private val truthTablePanel = new TruthTableTab(ast, tokens)
-  private val theoremProofTablePanel = new TheoremProofTab(ast, tokens)
 
   start
 

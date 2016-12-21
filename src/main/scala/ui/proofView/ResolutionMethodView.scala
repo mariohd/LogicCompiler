@@ -77,11 +77,11 @@ class ResolutionMethodView extends JFrame {
 
     verifyTheorem.addActionListener(new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
-        if (Proof.isTheorem(dataModel.premises.map((s) => s.cnfForm).toList, theoremField.getText.toUpperCase.replace("V", "v"))) {
-          JOptionPane.showMessageDialog(null, s"${sanitize(theoremField.getText)} is a theorem.", "Proved", JOptionPane.PLAIN_MESSAGE)
-        } else {
-          JOptionPane.showMessageDialog(null, s"${sanitize(theoremField.getText)} is not a theorem.", "Not a theorem", JOptionPane.ERROR_MESSAGE)
-        }
+        val theorem = (theoremField.getText.toUpperCase.replace("V", "v"))
+        val premises = dataModel.premises.map((s) => s.premise).mkString(", ")
+        val resolutionStepsView = new ResolutionSteps(sanitize(premises), sanitize(theorem))
+        if (Proof.isTheorem(dataModel.premises.map((s) => s.cnfForm).toList, theorem, resolutionStepsView.receiveStep))
+          resolutionStepsView.isProved
       }
     })
 
